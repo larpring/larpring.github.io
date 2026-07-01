@@ -1,23 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#15101f"/><stop offset="0.55" stop-color="#1a1330"/><stop offset="1" stop-color="#241738"/>
-    </linearGradient>
-    <linearGradient id="g" x1="120" y1="240" x2="620" y2="360" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#7c5cff"/><stop offset="0.5" stop-color="#ff5db1"/><stop offset="1" stop-color="#ff7a5c"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.35"/><stop offset="1" stop-color="#7c5cff" stop-opacity="0"/>
-    </radialGradient>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#16161e" stroke-width="1"/>
+    </pattern>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
   </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <ellipse cx="990" cy="300" rx="360" ry="320" fill="url(#glow)"/>
-  <g transform="translate(980,300)">
-    <circle r="150" fill="none" stroke="url(#g)" stroke-width="26"/>
-    <circle cx="0" cy="-150" r="34" fill="#ff5db1"/>
-    <circle r="24" fill="#efeaf5"/>
+
+  <!-- base + grid texture -->
+  <rect width="1200" height="630" fill="#0b0b0e"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- square logo (matches site header) -->
+  <g transform="translate(96,236)">
+    <rect x="0" y="0" width="132" height="132" fill="none" stroke="#9FA1FF" stroke-width="9"/>
+    <rect x="35" y="35" width="60" height="60" fill="#AEE2FF"/>
+    <rect x="80" y="0" width="28" height="28" fill="#D9F9DF"/>
   </g>
-  <text x="110" y="315" font-family="Verdana,Geneva,sans-serif" font-size="130" font-weight="bold" fill="url(#g)">larpring</text>
-  <text x="116" y="385" font-family="Verdana,Geneva,sans-serif" font-size="38" fill="#b0a4c6">a little ring of hand-made personal websites</text>
-  <text x="116" y="470" font-family="Verdana,Geneva,sans-serif" font-size="28" fill="#6d6280">invite only · larpring.github.io</text>
+
+  <!-- wordmark (flat, single color) -->
+  <text x="274" y="332" font-family="'Outfit','Inter',sans-serif" font-size="122" font-weight="800" letter-spacing="-4" fill="#f0f0f5">larpring</text>
+  <!-- tagline -->
+  <text x="278" y="392" font-family="'Inter',sans-serif" font-size="30" fill="#9fa0b2">a little ring of hand-made personal websites</text>
+  <!-- url -->
+  <text x="278" y="438" font-family="'Inter',sans-serif" font-size="23" letter-spacing="1" fill="#565668">invite only  ·  larpring.github.io</text>
+
+  <!-- grain overlay -->
+  <rect width="1200" height="630" filter="url(#grain)" opacity="0.14"/>
 </svg>
