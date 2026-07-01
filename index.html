@@ -490,11 +490,10 @@
 
     <hr>
 
-    <h2>how it works</h2>
-    <p>every member&apos;s site links to the next one. hit <b>next</b> and you land on someone else&apos;s page;
-      keep going and the chain eventually curls back to where you started. a circle of sites wired together
-      by hand, with no algorithm deciding the order and no feed in the middle.</p>
-    <div class="try">give it a spin:
+    <p>every site in here points to the next, so from any one of them you can wander the whole circle and
+      end up back where you started. <b>next</b> and <b>prev</b> walk the loop; <b>random</b> drops you
+      somewhere you haven&apos;t been. why any of this matters is in the <a href="manifesto.html">manifesto</a>.</p>
+    <div class="try">start anywhere:
       <a class="pill" id="t-prev" href="random/">
         <svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
@@ -518,19 +517,14 @@
       </a>
     </div>
 
-    <h2>why though</h2>
-    <p class="muted">because the best parts of the web were always the pages people built just because they
-      wanted to. no metrics, no ads, nobody optimizing for your time. a ring is an old, honest way to wander
-      between those pages and find the next one. the longer rant lives in the <a href="manifesto.html">manifesto</a>.</p>
-
-    <h2>members <span class="count" id="count"></span></h2>
+    <h2>the ring <span class="count" id="count"></span></h2>
     <div class="search-wrap">
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
         stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
-      <input id="search" type="search" placeholder="search members..." autocomplete="off" spellcheck="false">
+      <input id="search" type="search" placeholder="search the ring..." autocomplete="off" spellcheck="false">
     </div>
     <div class="grid" id="members">
       <p class="empty">loading&hellip;</p>
