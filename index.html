@@ -461,6 +461,25 @@
       color: var(--ink);
       overflow-x: auto;
       white-space: pre;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .snippet::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .snippet::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .snippet::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius);
+    }
+
+    .snippet::-webkit-scrollbar-thumb:hover {
+      background: var(--palette-1);
     }
 
     .pill.copied {
