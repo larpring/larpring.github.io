@@ -439,6 +439,89 @@
       border-radius: var(--radius);
     }
 
+    code {
+      font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+      background: var(--border);
+      padding: 1px 6px;
+      border-radius: var(--radius);
+      font-size: .9em;
+    }
+
+    .snippet {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin: 8px 0 12px;
+      font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .pill.copied {
+      border-color: #35c46a;
+      color: #35c46a;
+    }
+
+    .ring-map {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0 32px;
+    }
+
+    .ring-map-inner {
+      position: relative;
+    }
+
+    .ring-map-path {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ring-node {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--palette-1);
+      overflow: hidden;
+      text-decoration: none;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .ring-node:hover {
+      border-color: var(--palette-1);
+      transform: scale(1.18);
+      z-index: 2;
+    }
+
+    .ring-node img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ring-node .dot {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      border: 2px solid var(--card);
+    }
+
     .badge-light {
       display: none;
     }
@@ -518,6 +601,7 @@
     </div>
 
     <h2>the ring <span class="count" id="count"></span></h2>
+    <div id="ringMapHost"></div>
     <div class="search-wrap">
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
         stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
@@ -535,6 +619,15 @@
       <a href="https://discord.com/users/1352866897900732446" target="_blank" rel="noopener">arshnah on Discord</a>
       and ask.
     </p>
+
+    <p class="muted" style="margin-top:20px">already invited? once your entry's in <code>webring.json</code>,
+      type your handle and grab your nav snippet:</p>
+    <div class="search-wrap">
+      <input id="handle" type="text" placeholder="your handle..." autocomplete="off" spellcheck="false">
+    </div>
+    <pre class="snippet" id="snippetOut"></pre>
+    <button class="pill" id="copySnippet" type="button">copy snippet</button>
+
     <p><a href="./">
         <img class="badge badge-dark" src="badge.svg" width="88" height="31" alt="larpring webring badge">
         <img class="badge badge-light" src="badge-light.svg" width="88" height="31" alt="larpring webring badge">
@@ -587,6 +680,33 @@
       return '<span class="dot ' + cls + '" title="' + label + '" aria-label="' + label + '"></span>';
     }
 
+    function ringNodeInner(m) {
+      var av = m.gh
+        ? '<img src="https://avatars.githubusercontent.com/' + esc(m.gh) + '?size=56" alt="" loading="lazy" onerror="this.remove()">'
+        : "";
+      var initial = esc((m.name || "?").charAt(0).toUpperCase());
+      return av + initial;
+    }
+
+    function buildRingMap(members) {
+      var n = members.length;
+      if (!n) return "";
+      var size = 220, cx = size / 2, cy = size / 2, r = size / 2 - 26;
+      var nodes = members.map(function (m, i) {
+        var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+        var x = cx + r * Math.cos(angle);
+        var y = cy + r * Math.sin(angle);
+        return '<a class="ring-node" style="left:' + (x - 15) + 'px;top:' + (y - 15) + 'px" ' +
+          'href="' + esc(m.url) + '" target="_blank" rel="noopener" title="' + esc(m.name) + '">' +
+          statusDot(m) + ringNodeInner(m) +
+          '</a>';
+      }).join("");
+      return '<div class="ring-map"><div class="ring-map-inner" style="width:' + size + 'px;height:' + size + 'px;">' +
+        '<svg class="ring-map-path" viewBox="0 0 ' + size + ' ' + size + '"><circle cx="' + cx + '" cy="' + cy +
+        '" r="' + r + '" fill="none" stroke="var(--border)" stroke-width="2" stroke-dasharray="3 7"/></svg>' +
+        nodes + '</div></div>';
+    }
+
     function card(m) {
       var av = m.gh
         ? '<img src="https://avatars.githubusercontent.com/' + esc(m.gh) + '?size=76" alt="" loading="lazy" onerror="this.remove()">'
@@ -623,6 +743,8 @@
           document.getElementById("t-next").href = "go.html?from=" + encodeURIComponent(members[0].name) + "&dir=next";
         }
         grid.innerHTML = members.map(card).join("") || '<p class="empty">no members yet.</p>';
+        var ringMapHost = document.getElementById("ringMapHost");
+        if (ringMapHost) ringMapHost.innerHTML = buildRingMap(members);
         var rows = [].slice.call(grid.querySelectorAll(".m"));
         search.addEventListener("input", function () {
           var query = this.value.trim().toLowerCase();
@@ -633,6 +755,44 @@
       }).catch(function () {
         grid.innerHTML = '<p class="empty">could not load the member list. (serve over http, not file://.)</p>';
       });
+    })();
+
+    (function () {
+      var handleInput = document.getElementById("handle");
+      var snippetOut = document.getElementById("snippetOut");
+      var copyBtn = document.getElementById("copySnippet");
+      if (!handleInput || !snippetOut) return;
+
+      function buildSnippet(handle) {
+        var h = handle || "your-handle";
+        var base = CONFIG.baseUrl;
+        return "<!-- larpring webring -->\n" +
+          '<nav class="webring">\n' +
+          '  <a href="' + base + "/go.html?from=" + encodeURIComponent(h) + '&dir=prev">&laquo; prev</a> |\n' +
+          '  <a href="' + base + '/random/">random</a> |\n' +
+          '  <a href="' + base + '/">larpring</a> |\n' +
+          '  <a href="' + base + "/go.html?from=" + encodeURIComponent(h) + '&dir=next">next &raquo;</a>\n' +
+          "</nav>";
+      }
+
+      function update() { snippetOut.textContent = buildSnippet(handleInput.value.trim()); }
+      handleInput.addEventListener("input", update);
+      update();
+
+      if (copyBtn) {
+        copyBtn.addEventListener("click", function () {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+          navigator.clipboard.writeText(snippetOut.textContent).then(function () {
+            var orig = copyBtn.textContent;
+            copyBtn.classList.add("copied");
+            copyBtn.textContent = "copied!";
+            setTimeout(function () {
+              copyBtn.classList.remove("copied");
+              copyBtn.textContent = orig;
+            }, 1500);
+          }).catch(function () {});
+        });
+      }
     })();
   </script>
 </body>
